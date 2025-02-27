@@ -134,7 +134,7 @@
 			Object.keys(items).forEach(item => {
 				for (let i = 0; i < items[item]; i++) {
 					console.log(item, player, 0, 0, position[0], position[1])
-					new Pic(`images/${item}_${player}.svg`).sca(.7).pos(0, 0, position[0], position[1]).gesture();
+					new Pic(`images/${item}_${player}.svg`).sca(.7).pos(0, 0, position[0], position[1]).gesture({scale: false});
 				}
 			});
 		});
