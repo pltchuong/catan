@@ -103,27 +103,27 @@
 			if (r % 2 == 0) {
 				for (let c = 0; c < board[r].length; c++) {
 					if (board[r][c] == 1) {
-						new Pic(`/images/tile_${all_tiles[ti]}.svg`).siz(w).pos(w * c, h * r).addTo(container);
+						new Pic(`images/tile_${all_tiles[ti]}.svg`).siz(w).pos(w * c, h * r).addTo(container);
 						if (all_tiles[ti] != "desert") {
-							new Pic(`/images/prob_${all_chits[ci]}.svg`).siz(50).pos(w * c + 75, h * r + 125).drag().addTo(container);
+							new Pic(`images/prob_${all_chits[ci]}.svg`).siz(50).pos(w * c + 75, h * r + 125).drag().addTo(container);
 							ci++;
 						}
 						ti++;
 					} else {
-						new Pic(`/images/tile_sea.svg`).siz(w).pos(w * c, h * r).addTo(container);
+						new Pic(`images/tile_sea.svg`).siz(w).pos(w * c, h * r).addTo(container);
 					}
 				}
 			} else {
 				for (let c = 0; c < board[r].length; c++) {
 					if (board[r][c] == 1) {
-						new Pic(`/images/tile_${all_tiles[ti]}.svg`).siz(w).pos(w * c + w/2, h * r).addTo(container);
+						new Pic(`images/tile_${all_tiles[ti]}.svg`).siz(w).pos(w * c + w/2, h * r).addTo(container);
 						if (all_tiles[ti] != "desert") {
-							new Pic(`/images/prob_${all_chits[ci]}.svg`).siz(50).pos(w * c + w/2 + 75, h * r + 125).drag().addTo(container);
+							new Pic(`images/prob_${all_chits[ci]}.svg`).siz(50).pos(w * c + w/2 + 75, h * r + 125).drag().addTo(container);
 							ci++;
 						}
 						ti++;
 					} else {
-						new Pic(`/images/tile_sea.svg`).siz(w).pos(w * c + w/2, h * r).addTo(container);
+						new Pic(`images/tile_sea.svg`).siz(w).pos(w * c + w/2, h * r).addTo(container);
 					}
 				}
 			}
@@ -134,7 +134,7 @@
 			Object.keys(items).forEach(item => {
 				for (let i = 0; i < items[item]; i++) {
 					console.log(item, player, 0, 0, position[0], position[1])
-					new Pic(`/images/${item}_${player}.svg`).sca(.5).pos(0, 0, position[0], position[1]).drag();
+					new Pic(`images/${item}_${player}.svg`).sca(.5).pos(0, 0, position[0], position[1]).drag();
 				}
 			});
 		});
