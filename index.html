@@ -1,5 +1,6 @@
 <html>
 <head>
+	<script src="https://unpkg.com/roll-a-die@2.0.1/dist/roll-a-die.js"></script>
 	<script type="module">
 
 	function shuffle(array) {
@@ -77,19 +78,14 @@
 	const board = scenarios[scenario]["board"];
 	const items = scenarios[scenario]["items"];
 
-	const all_assets = Object.keys(tiles).map(t => `tile_${t}.svg`)
-			   .concat(Object.keys(chits).map(t => `prob_${t}.svg`))
-			   .concat(combine(Object.keys(items), Object.keys(players)).map(t => `${t}.svg`))
-			   .concat(["icon_robber.svg", "icon_pirate.svg", "port_generic.svg"])
-	;
 	const all_tiles = Object.keys(tiles).map(key => Array(tiles[key]).fill(key)).flatMap(i => i);
 	const all_chits = Object.keys(chits).map(key => Array(chits[key]).fill(key)).flatMap(i => i);
 	const one_ports = Object.keys(ports).map(key => Array(ports[key]).fill(key)).flatMap(i => i);
 	const two_ports = Array(board.flatMap(i => i).filter(i => i == 1).length - one_ports.length).fill();
 	const all_ports = one_ports.concat(two_ports);
-
 	const board_width  = w * Math.max(...board.map(edge=> edge.length));
 	const board_height = h * board.length + 58;
+
 	new Frame(
 		FIT,
 		board_width + 200,
@@ -97,29 +93,34 @@
 		"#328dc0",
 		"#328dc0",
 		ready,
-		all_assets,
-		"images/"
 	);
 	function ready() {
 
 		shuffle(all_tiles);
-		shuffle(all_chits);
 		shuffle(all_ports);
+		shuffle(all_chits);
 
 		const container = new Container(board_width, board_height).center();
 
 		let ti = 0;
 		let pi = 0;
 		let ci = 0;
+		let chit_objs = {}
 		for (let r = 0; r < board.length; r++) {
 			for (let c = 0; c < board[r].length; c++) {
 				let tile = new Container().addTo(container).pos(w * c + (r % 2 == 0 ? 0 : w/2), h * r).setBounds(w, h + 58);
 				if (board[r][c] == 1) {
 					new Pic(`images/tile_${all_tiles[ti]}.svg`).siz(w).addTo(tile);
 					if (all_tiles[ti] == "desert") {
-						new Pic(`images/icon_robber.svg`).siz(80).pos(0, 30, CENTER, CENTER).addTo(tile).drag();
+						new Pic(`images/icon_robber.svg`).siz(80).pos(0, 30, CENTER, CENTER).addTo(tile).top().drag();
 					} else {
-						new Pic(`images/prob_${all_chits[ci]}.svg`).siz(50).pos(0, 30, CENTER, CENTER).addTo(tile).drag();
+						let chit_num = all_chits[ci];
+						let chit_obj = new Pic(`images/prob_${chit_num}.svg`).centerReg().sca(.4).pos(0, 30, CENTER, CENTER).addTo(tile).top().drag();
+						if (Object.keys(chit_objs).includes(chit_num)) {
+							chit_objs[chit_num].push(chit_obj);
+						} else {
+							chit_objs[chit_num] = [chit_obj];
+						}
 						ci++;
 					}
 					ti++;
@@ -137,8 +138,44 @@
 			let position = players[player];
 			Object.keys(items).forEach(item => {
 				for (let i = 0; i < items[item]; i++) {
-					new Pic(`images/${item}_${player}.svg`).sca(.7).pos(0, 0, position[0], position[1]).gesture({scale: false});
+					let item_obj = new Pic(`images/${item}_${player}.svg`).centerReg().sca(.7).pos(0, 0, position[0], position[1]).drag();
+					if (item == "road") {
+						let start_x, start_y;
+						item_obj.on("mousedown", () => {
+							start_x = item_obj.x;
+							start_y = item_obj.y;
+						});
+
+						item_obj.on("pressup", () => {
+							if (start_x == item_obj.x && start_y == item_obj.y) {
+								item_obj.animate({props: {rotation: "60"}, time:.1, ease: "linear"});
+							}
+						})
+
+					}
 				}
+			});
+		});
+
+		new Label("Dice").siz(100).pos(20, 450, RIGHT, TOP).on("click", function(e) {
+			for (let chit_num in chit_objs) {
+				for (let chit_obj of chit_objs[chit_num]) {
+					chit_obj.animate({props: {scale: .4}, time:.1, ease: "linear"});
+				}
+			}
+			rollADie({
+				element: document.getElementById('dice-box1'), // element to display the animated dice in.
+				numberOfDice: 2,
+				soundVolume: 0,
+				delay: 1000000000,
+				callback: res => {
+					let dice = res[0] + res[1];
+					if (Object.keys(chit_objs).includes(dice.toString())) {
+						for (let chit_obj of chit_objs[dice]) {
+							chit_obj.animate({props: {scale: .7}, time:.1, ease: "linear"});
+						}
+					}
+				},
 			});
 		});
 
@@ -146,5 +183,6 @@
 	</script>
 </head>
 <body>
+	<div style="position: absolute; top: 0; left: 80%; z-index: 10;" id="dice-box1"></div>
 </body>
 </html>
