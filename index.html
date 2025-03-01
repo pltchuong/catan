@@ -80,6 +80,21 @@
 				 [2,2,0,1,1,1,0,2,2],
 				[2,2,2,0,0,0,0,2,2,2],
 			],
+//             r = 2
+//                 r-1, c-1
+//                 r-1, c
+//                 r, c-1
+//                 r, c+1
+//                 r+1, c-1
+//                 r+1, c
+//
+//             r-1, c
+//             r-1, c+1
+//             r, c-1
+//             r, c+1
+//             r+1, c-1
+//             r+1, c
+
 		}
 	};
 
@@ -126,13 +141,13 @@
 				let tile_x = w * c + (r % 2 == 0 ? 0 : w/2);
 				let tile_y = h * r;
 				if (board[r][c] == 1) {
-					new Pic(`images/tile_${tile}.svg`).siz(w).pos(tile_x, tile_y);
+					board[r][c] = new Pic(`images/tile_${tile}.svg`).nam(tile).siz(w).pos(tile_x, tile_y);
 					if (tile == "desert") {
 						let robber_zim = new Pic(`images/icon_robber.svg`).centerReg().sca(.4).pos(tile_x + 60, tile_y + 100).drag();
 						chits_zim["7"].push(robber_zim);
 					} else {
 						let chit_num = all_chits[ci];
-						let chit_zim = new Pic(`images/prob_${chit_num}.svg`).sca(.4).pos(tile_x + 75, tile_y + 120).drag();
+						let chit_zim = new Pic(`images/prob_${chit_num}.svg`).centerReg().sca(.4).pos(tile_x + 75, tile_y + 120).drag();
 						if (Object.keys(chits_zim).includes(chit_num)) {
 							chits_zim[chit_num].push(chit_zim);
 						} else {
@@ -142,11 +157,90 @@
 					}
 					ti++;
 				} else if (board[r][c] == 0) {
-					new Pic(`images/tile_sea.svg`).siz(w).pos(tile_x, tile_y);
+					board[r][c] = new Pic(`images/tile_sea.svg`).nam("sea").siz(w).pos(tile_x, tile_y);
 					if (all_ports[pi]) {
+                        board[r][c].has_port = true;
+                        board[r][c].tile_x = tile_x;
+                        board[r][c].tile_y = tile_y;
 						new Pic(`images/port_${all_ports[pi]}.svg`).siz(100).pos(tile_x + 40, tile_y + 50);
 					}
 					pi++;
+				}
+			}
+		}
+
+        for (let r = 0; r < board.length; r++) {
+			for (let c = 0; c < board[r].length; c++) {
+				if (board[r][c].name == "sea" && board[r][c].has_port) {
+                    let tile_x = board[r][c].tile_x;
+                    let tile_y = board[r][c].tile_y;
+                    let around_tiles_zim = [];
+                    if (r % 2 == 0) {
+                        around_tiles_zim = [
+                            board[r-1] ? board[r-1][c-1] : undefined, // top left
+                            board[r-1] ? board[r-1][c]   : undefined, // top right
+                            board[r]   ? board[r][c+1]   : undefined, // right
+                            board[r+1] ? board[r+1][c]   : undefined, // bottom right
+                            board[r+1] ? board[r+1][c-1] : undefined, // bottom left
+                            board[r]   ? board[r][c-1]   : undefined, // left
+                        ];
+                    } else {
+                        around_tiles_zim = [
+                            board[r-1] ? board[r-1][c]   : undefined, // top left
+                            board[r-1] ? board[r-1][c+1] : undefined, // top right
+                            board[r]   ? board[r][c+1]   : undefined, // right
+                            board[r+1] ? board[r+1][c+1] : undefined, // bottom right
+                            board[r+1] ? board[r+1][c]   : undefined, // bottom left
+                            board[r]   ? board[r][c-1]   : undefined, // left
+                        ]
+                    }
+
+                    let dock_indexes = [];
+                    around_tiles_zim.forEach((t, i) => {
+                        if (t != undefined && t.name && t.name != "sea") {
+                            dock_indexes.push(i);
+                        }
+                    })
+                    shuffle(dock_indexes);
+
+                    let a = dock_indexes[0];
+                    let ax = 0;
+                    let ay = 0;
+                    let bx = 0;
+                    let by = 0;
+                    if (a == 0) {
+                        ax = 35;
+                        ay = 50;
+                        bx = 90;
+                        by = 10;
+                    } else if (a == 1) {
+                        ax = 97;
+                        ay = 20;
+                        bx = 160;
+                        by = 60;
+                    } else if (a == 2) {
+                        ax = 160;
+                        ay = 60;
+                        bx = 160;
+                        by = 135;
+                    } else if (a == 3) {
+                        ax = 160;
+                        ay = 135;
+                        bx = 90;
+                        by = 170;
+                    } else if (a == 4) {
+                        ax = 90;
+                        ay = 170;
+                        bx = 20;
+                        by = 135;
+                    } else if (a == 5) {
+                        ax = 20;
+                        ay = 135;
+                        bx = 20;
+                        by = 60;
+                    }
+                    new Pic(`images/icon_dock.svg`).centerReg().sca(.2).pos(tile_x + ax, tile_y + ay).rot((a-1+0) * 60);
+                    new Pic(`images/icon_dock.svg`).centerReg().sca(.2).pos(tile_x + bx, tile_y + by).rot((a-1+1) * 60);
 				}
 			}
 		}
@@ -186,7 +280,7 @@
 				}
 			}
 			rollADie({
-				element: document.getElementById('dice'), // element to display the animated dice in.
+				element: document.getElementById("dice"), // element to display the animated dice in.
 				numberOfDice: 2,
 				soundVolume: 0,
 				delay: 1000000000,
