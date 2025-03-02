@@ -14,6 +14,10 @@
         return array1.flatMap(d => array2.map(v => `${d}_${v}`));
     }
 
+    function param(key, default_value=false) {
+        return new URLSearchParams(location.search).get(key) || default_value;
+    }
+
     import zim from "https://zimjs.org/cdn/017/zim";
 
     const FIXED_TILES = ['sea', 'desert', 'gold', 'volcano'];
@@ -110,12 +114,12 @@
         },
     };
 
-    const scenario = "the_four_islands";
+    const scenario = param("map") && scenarios[param("map")] ? param("map") : "base";
     const board = scenarios[scenario].board;
     const board_width  = w * Math.max(...board.map(edge=> edge.length));
     const board_height = h * board.length + 58;
     const chits_zim = {
-        "7": [],
+        7: [],
     };
 
     new Frame(
@@ -149,8 +153,6 @@
                                 let port = cell[1];
                                 let path = cell[2];
                                 new Pic(`images/port_${port}.svg`).siz(100).pos(tile_x + 40, tile_y + 50).addTo(container);
-
-                                zog(path, cell)
 
                                 let ax = 0;
                                 let ay = 0;
@@ -202,7 +204,7 @@
                             let chit = cell[1];
                             let tile_zim = new Pic(`images/tile_${tile}.svg`).siz(w).pos(tile_x, tile_y).addTo(container);
                             let chit_zim = new Pic(`images/prob_${chit}.svg`).centerReg().sca(.4).pos(tile_x + 75, tile_y + 120).addTo(container).drag();
-                            if (Object.keys(chits_zim).includes(chit)) {
+                            if (Object.keys(chits_zim).includes(chit.toString())) {
                                 chits_zim[chit].push(chit_zim);
                             } else {
                                 chits_zim[chit] = [chit_zim];
@@ -270,6 +272,8 @@
 
         function shuffle_board(shuffle_tiles = false, shuffle_chits = false, shuffle_ports = false) {
 
+            zog(shuffle_tiles)
+
             // collect all data from the board
             let all_tiles = [];
             let all_ports = [];
@@ -328,7 +332,7 @@
             }
         }
 
-        shuffle_board();
+        shuffle_board(param("shuffle_tiles", false), param("shuffle_chits", false), param("shuffle_ports", false));
         setup_board();
         setup_players();
         setup_dices();
