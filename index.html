@@ -129,18 +129,80 @@
                 },
             },
             "board": [
-                [2,0,1,0,1,1,0,2],
-                 [0,1,0,1,1,1,0],
-                [2,0,0,1,1,1,1,0],
-                 [0,1,0,1,1,1,0],
-                [2,0,1,0,1,1,0,2],
-                 [0,1,1,0,0,0],
-                [2,0,0,0,1,1,0,2,2],
+                [2,0,0,0,0,0,2],
+                 [0,1,0,1,1,0],
+                [0,1,0,1,1,1,0],
+                 [0,0,1,1,1,1,0],
+                [0,1,0,1,1,1,0],
+                 [0,1,0,1,1,0],
+                [0,1,1,0,0,0],
+                 [0,0,0,1,1,0],
+                [2,2,2,0,0,0,2],
             ],
-        }
+        },
+
+        "heading_for_the_new_shores_4": {
+            "tiles": {
+                "gold": 2,
+                "grain": 5,
+                "wool": 5,
+                "ore": 5,
+                "brick": 5,
+                "lumber": 5,
+                "desert": 1,
+            },
+            "ports": {
+                "grain": 1,
+                "lumber": 1,
+                "wool": 1,
+                "ore": 1,
+                "brick": 1,
+                "generic": 4,
+            },
+            "chits": {
+                 "2": 2,
+                 "3": 3,
+                 "4": 3,
+                 "5": 3,
+                 "6": 3,
+                 "8": 3,
+                 "9": 3,
+                "10": 3,
+                "11": 3,
+                "12": 1,
+            },
+            "items": {
+                "road": {
+                    "count": 15,
+                    "width": 35,
+                    "height": 0,
+                },
+                "city": {
+                    "count": 4,
+                    "width": 90,
+                    "height": 130,
+                },
+                "settlement": {
+                    "count": 5,
+                    "width": 70,
+                    "height": 200,
+                },
+            },
+            "board": [
+                [2,0,0,0,0,0,0],
+                 [0,1,0,1,1,1,0],
+                [0,1,0,1,1,1,1,0],
+                 [0,0,1,1,1,1,1,0],
+                [0,1,0,1,1,1,1,0],
+                 [0,1,0,1,1,1,0],
+                [0,1,1,0,0,0,0],
+                 [0,0,1,0,1,1,0],
+                [2,2,0,0,0,0,0],
+            ],
+        },
 	};
 
-	const scenario = "heading_for_the_new_shores_3";
+	const scenario = "heading_for_the_new_shores_4";
 	const tiles = scenarios[scenario].tiles;
 	const ports = scenarios[scenario].ports;
 	const chits = scenarios[scenario].chits;
@@ -287,32 +349,32 @@
 			}
 		}
 
-		Object.keys(players).forEach(player => {
-			Object.keys(items).forEach(item => {
-				let item_obj = items[item];
-				for (let i = 0; i < item_obj.count; i++) {
-					let item_zim = new Pic(`images/${item}_${player}.svg`)
-						.centerReg()
-						.sca(.7)
-						.pos(item_obj.width * i, item_obj.height, players[player][0], players[player][1])
-						.drag()
-					;
-					if (item == "road") {
-						let start_x, start_y;
-						item_zim.on("mousedown", () => {
-							start_x = item_zim.x;
-							start_y = item_zim.y;
-						});
-						item_zim.on("pressup", () => {
-							// check if this is click event, not drag event
-							if (start_x == item_zim.x && start_y == item_zim.y) {
-								item_zim.animate({props: {rotation: "60"}, time:.1, ease: "linear"});
-							}
-						});
-					}
-				}
-			});
-		});
+		// Object.keys(players).forEach(player => {
+		// 	Object.keys(items).forEach(item => {
+		// 		let item_obj = items[item];
+		// 		for (let i = 0; i < item_obj.count; i++) {
+		// 			let item_zim = new Pic(`images/${item}_${player}.svg`)
+		// 				.centerReg()
+		// 				.sca(.7)
+		// 				.pos(item_obj.width * i, item_obj.height, players[player][0], players[player][1])
+		// 				.drag()
+		// 			;
+		// 			if (item == "road") {
+		// 				let start_x, start_y;
+		// 				item_zim.on("mousedown", () => {
+		// 					start_x = item_zim.x;
+		// 					start_y = item_zim.y;
+		// 				});
+		// 				item_zim.on("pressup", () => {
+		// 					// check if this is click event, not drag event
+		// 					if (start_x == item_zim.x && start_y == item_zim.y) {
+		// 						item_zim.animate({props: {rotation: "60"}, time:.1, ease: "linear"});
+		// 					}
+		// 				});
+		// 			}
+		// 		}
+		// 	});
+		// });
 
 		new Label("Dice").siz(100).pos(20, 450, RIGHT, TOP).on("click", function(e) {
 			// reset scale of all highlighted items
