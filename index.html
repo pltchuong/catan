@@ -1,88 +1,90 @@
 <html>
 <head>
-	<script src="https://unpkg.com/roll-a-die@2.0.1/dist/roll-a-die.js"></script>
-	<script type="module">
+    <script src="https://unpkg.com/roll-a-die@2.0.1/dist/roll-a-die.js"></script>
+    <script type="module">
 
-	function shuffle(array) {
-		for (let i = array.length - 1; i >= 0; i--) {
-			const j = Math.floor(Math.random() * (i + 1));
-			[array[i], array[j]] = [array[j], array[i]];
-		}
-	}
+    function shuffle(array) {
+        for (let i = array.length - 1; i >= 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
 
-	function combine(array1, array2) {
-		return array1.flatMap(d => array2.map(v => `${d}_${v}`));
-	}
+    function combine(array1, array2) {
+        return array1.flatMap(d => array2.map(v => `${d}_${v}`));
+    }
 
-	import zim from "https://zimjs.org/cdn/017/zim";
+    import zim from "https://zimjs.org/cdn/017/zim";
 
-	const w = 200;
-	const h = 174;
-	const players = {
-		"red": [LEFT, TOP],
-		"blue": [RIGHT, TOP],
-		"orange": [LEFT, BOTTOM],
-		"green": [RIGHT, BOTTOM],
-	};
-	const scenarios = {
-		"base": {
-			"tiles": {
-				"grain": 4,
-				"lumber": 4,
-				"wool": 4,
-				"ore": 3,
-				"brick": 3,
-				"desert": 1,
-			},
-			"ports": {
-				"grain": 1,
-				"lumber": 1,
-				"wool": 1,
-				"ore": 1,
-				"brick": 1,
-				"generic": 4,
-			},
-			"chits": {
-				 "2": 1,
-				 "3": 2,
-				 "4": 2,
-				 "5": 2,
-				 "6": 2,
-				 "8": 2,
-				 "9": 2,
-				"10": 2,
-				"11": 2,
-				"12": 1,
-			},
-			"items": {
-				"road": {
-					"count": 15,
-					"width": 35,
-					"height": 0,
-				},
-				"city": {
-					"count": 4,
-					"width": 90,
-					"height": 130,
-				},
-				"settlement": {
-					"count": 5,
-					"width": 70,
-					"height": 200,
-				},
-			},
-			"board": [
-				[2,2,2,0,0,0,0,2,2,2],
-				 [2,2,0,1,1,1,0,2,2],
-				[2,2,0,1,1,1,1,0,2,2],
-				 [2,0,1,1,1,1,1,0,2],
-				[2,2,0,1,1,1,1,0,2,2],
-				 [2,2,0,1,1,1,0,2,2],
-				[2,2,2,0,0,0,0,2,2,2],
-			],
-		},
+    const w = 200;
+    const h = 174;
+    const players = {
+        "red": [LEFT, TOP],
+        "blue": [RIGHT, TOP],
+        "orange": [LEFT, BOTTOM],
+        "green": [RIGHT, BOTTOM],
+    };
+    const scenarios = {
+        "base": {
+            "width": 1.5,
+            "tiles": {
+                "grain": 4,
+                "lumber": 4,
+                "wool": 4,
+                "ore": 3,
+                "brick": 3,
+                "desert": 1,
+            },
+            "ports": {
+                "grain": 1,
+                "lumber": 1,
+                "wool": 1,
+                "ore": 1,
+                "brick": 1,
+                "generic": 4,
+            },
+            "chits": {
+                 "2": 1,
+                 "3": 2,
+                 "4": 2,
+                 "5": 2,
+                 "6": 2,
+                 "8": 2,
+                 "9": 2,
+                "10": 2,
+                "11": 2,
+                "12": 1,
+            },
+            "items": {
+                "road": {
+                    "count": 15,
+                    "width": 35,
+                    "height": 0,
+                },
+                "city": {
+                    "count": 4,
+                    "width": 90,
+                    "height": 130,
+                },
+                "settlement": {
+                    "count": 5,
+                    "width": 70,
+                    "height": 200,
+                },
+            },
+            "board": [
+                [2,2,2,0,0,0,0,2,2,2],
+                 [2,2,0,1,1,1,0,2,2],
+                [2,2,0,1,1,1,1,0,2,2],
+                 [2,0,1,1,1,1,1,0,2],
+                [2,2,0,1,1,1,1,0,2,2],
+                 [2,2,0,1,1,1,0,2,2],
+                [2,2,2,0,0,0,0,2,2,2],
+            ],
+        },
 
         "heading_for_the_new_shores_3": {
+            "width": 2,
             "tiles": {
                 "gold": 2,
                 "grain": 4,
@@ -141,7 +143,69 @@
             ],
         },
 
+        "across_the_wasteland": {
+            "width": 2,
+            "tiles": {
+                "gold": 2,
+                "grain": 4,
+                "wool": 4,
+                "ore": 4,
+                "brick": 4,
+                "lumber": 5,
+                "desert": 5,
+            },
+            "ports": {
+                "grain": 1,
+                "lumber": 1,
+                "wool": 1,
+                "ore": 1,
+                "brick": 1,
+                "generic": 4,
+            },
+            "chits": {
+                 "2": 1,
+                 "3": 3,
+                 "4": 3,
+                 "5": 2,
+                 "6": 3,
+                 "8": 3,
+                 "9": 2,
+                "10": 3,
+                "11": 3,
+                "12": 1,
+            },
+            "items": {
+                "road": {
+                    "count": 15,
+                    "width": 35,
+                    "height": 0,
+                },
+                "city": {
+                    "count": 4,
+                    "width": 90,
+                    "height": 130,
+                },
+                "settlement": {
+                    "count": 5,
+                    "width": 70,
+                    "height": 200,
+                },
+            },
+            "board": [
+                [2,0,0,0,0,0,0],
+                 [0,1,0,1,1,1,0],
+                [0,1,0,1,1,1,1,0],
+                 [0,0,1,1,1,1,1,0],
+                [0,1,0,1,1,1,1,0],
+                 [0,1,0,1,1,1,0],
+                [0,1,1,0,0,0,0],
+                 [0,0,1,0,1,1,0],
+                [2,2,0,0,0,0,0],
+            ],
+        },
+
         "heading_for_the_new_shores_4": {
+            "width": 2,
             "tiles": {
                 "gold": 2,
                 "grain": 5,
@@ -200,82 +264,82 @@
                 [2,2,0,0,0,0,0],
             ],
         },
-	};
+    };
 
-	const scenario = "heading_for_the_new_shores_4";
-	const tiles = scenarios[scenario].tiles;
-	const ports = scenarios[scenario].ports;
-	const chits = scenarios[scenario].chits;
-	const board = scenarios[scenario].board;
-	const items = scenarios[scenario].items;
+    const scenario = "heading_for_the_new_shores_4";
+    const tiles = scenarios[scenario].tiles;
+    const ports = scenarios[scenario].ports;
+    const chits = scenarios[scenario].chits;
+    const board = scenarios[scenario].board;
+    const items = scenarios[scenario].items;
 
-	const all_tiles = Object.keys(tiles).map(key => Array(tiles[key]).fill(key)).flatMap(i => i);
-	const all_chits = Object.keys(chits).map(key => Array(chits[key]).fill(key)).flatMap(i => i);
-	const one_ports = Object.keys(ports).map(key => Array(ports[key]).fill(key)).flatMap(i => i);
-	const two_ports = Array(board.flatMap(i => i).filter(i => i == 1).length - one_ports.length).fill();
-	const all_ports = one_ports.concat(two_ports);
-	const board_width  = w * Math.max(...board.map(edge=> edge.length));
-	const board_height = h * board.length + 58;
+    const all_tiles = Object.keys(tiles).map(key => Array(tiles[key]).fill(key)).flatMap(i => i);
+    const all_chits = Object.keys(chits).map(key => Array(chits[key]).fill(key)).flatMap(i => i);
+    const one_ports = Object.keys(ports).map(key => Array(ports[key]).fill(key)).flatMap(i => i);
+    const two_ports = Array(board.flatMap(i => i).filter(i => i == 1).length - one_ports.length).fill();
+    const all_ports = one_ports.concat(two_ports);
+    const board_width  = w * Math.max(...board.map(edge=> edge.length));
+    const board_height = h * board.length + 58;
 
-	new Frame(
-		FIT,
-		board_width + 200,
-		board_height + 58 + 50,
-		"#328dc0",
-		"#328dc0",
-		ready,
-	);
-	function ready() {
+    new Frame(
+        FIT,
+        board_width * scenarios[scenario].width,
+        board_height + 58 + 50,
+        "#328dc0",
+        "#328dc0",
+        ready,
+    );
+    function ready() {
 
-		shuffle(all_tiles);
-		shuffle(all_ports);
-		shuffle(all_chits);
+        shuffle(all_tiles);
+        shuffle(all_ports);
+        shuffle(all_chits);
 
-		const container = new Container(board_width, board_height).center();
+        const container = new Container(board_width, board_height).center();
 
-		let ti = 0;
-		let pi = 0;
-		let ci = 0;
-		let chits_zim = {
-			"7": [],
-		}
-		for (let r = 0; r < board.length; r++) {
-			for (let c = 0; c < board[r].length; c++) {
-				let tile = all_tiles[ti];
-				let tile_x = w * c + (r % 2 == 0 ? 0 : w/2);
-				let tile_y = h * r;
-				if (board[r][c] == 1) {
-					board[r][c] = new Pic(`images/tile_${tile}.svg`).nam(tile).siz(w).pos(tile_x, tile_y).addTo(container);
-					if (tile == "desert") {
-						let robber_zim = new Pic(`images/icon_robber.svg`).centerReg().sca(.4).pos(tile_x + 60, tile_y + 100).addTo(container).drag();
-						chits_zim["7"].push(robber_zim);
-					} else {
-						let chit_num = all_chits[ci];
-						let chit_zim = new Pic(`images/prob_${chit_num}.svg`).centerReg().sca(.4).pos(tile_x + 75, tile_y + 120).addTo(container).drag();
-						if (Object.keys(chits_zim).includes(chit_num)) {
-							chits_zim[chit_num].push(chit_zim);
-						} else {
-							chits_zim[chit_num] = [chit_zim];
-						}
-						ci++;
-					}
-					ti++;
-				} else if (board[r][c] == 0) {
-					board[r][c] = new Pic(`images/tile_sea.svg`).nam("sea").siz(w).pos(tile_x, tile_y).addTo(container);
-					if (all_ports[pi]) {
+        let ti = 0;
+        let pi = 0;
+        let ci = 0;
+        let chits_zim = {
+            "7": [],
+        }
+        for (let r = 0; r < board.length; r++) {
+            for (let c = 0; c < board[r].length; c++) {
+                let tile = all_tiles[ti];
+                let tile_x = w * c + (r % 2 == 0 ? 0 : w/2);
+                let tile_y = h * r;
+                if (board[r][c] == 1) {
+                    board[r][c] = new Pic(`images/tile_${tile}.svg`).nam(tile).siz(w).pos(tile_x, tile_y).addTo(container);
+                    if (tile == "desert") {
+                        let robber_zim = new Pic(`images/icon_robber.svg`).centerReg().sca(.4).pos(tile_x + 60, tile_y + 100).addTo(container).drag();
+                        chits_zim["7"].push(robber_zim);
+                    } else {
+                        let chit_num = all_chits[ci];
+                        let chit_zim = new Pic(`images/prob_${chit_num}.svg`).centerReg().sca(.4).pos(tile_x + 75, tile_y + 120).addTo(container).drag();
+                        if (Object.keys(chits_zim).includes(chit_num)) {
+                            chits_zim[chit_num].push(chit_zim);
+                        } else {
+                            chits_zim[chit_num] = [chit_zim];
+                        }
+                        ci++;
+                    }
+                    ti++;
+                } else if (board[r][c] == 0) {
+                    board[r][c] = new Pic(`images/tile_sea.svg`).nam("sea").siz(w).pos(tile_x, tile_y).addTo(container);
+                    if (all_ports[pi]) {
                         board[r][c].has_port = true;
                         board[r][c].tile_x = tile_x;
                         board[r][c].tile_y = tile_y;
-						new Pic(`images/port_${all_ports[pi]}.svg`).siz(100).pos(tile_x + 40, tile_y + 50).addTo(container);
-					}
-					pi++;
-				}
-			}
-		}
+                        new Pic(`images/port_${all_ports[pi]}.svg`).siz(100).pos(tile_x + 40, tile_y + 50).addTo(container);
+                    }
+                    pi++;
+                }
+            }
+        }
 
         for (let r = 0; r < board.length; r++) {
-			for (let c = 0; c < board[r].length; c++) {
-				if (board[r][c].name == "sea" && board[r][c].has_port) {
+            for (let c = 0; c < board[r].length; c++) {
+                if (board[r][c].name == "sea" && board[r][c].has_port) {
                     let tile_x = board[r][c].tile_x;
                     let tile_y = board[r][c].tile_y;
                     let around_tiles_zim = [];
@@ -345,64 +409,64 @@
                     }
                     new Pic(`images/icon_dock.svg`).centerReg().sca(.2).pos(tile_x + ax, tile_y + ay).rot((a-1+0) * 60).addTo(container);
                     new Pic(`images/icon_dock.svg`).centerReg().sca(.2).pos(tile_x + bx, tile_y + by).rot((a-1+1) * 60).addTo(container);
-				}
-			}
-		}
+                }
+            }
+        }
 
-		// Object.keys(players).forEach(player => {
-		// 	Object.keys(items).forEach(item => {
-		// 		let item_obj = items[item];
-		// 		for (let i = 0; i < item_obj.count; i++) {
-		// 			let item_zim = new Pic(`images/${item}_${player}.svg`)
-		// 				.centerReg()
-		// 				.sca(.7)
-		// 				.pos(item_obj.width * i, item_obj.height, players[player][0], players[player][1])
-		// 				.drag()
-		// 			;
-		// 			if (item == "road") {
-		// 				let start_x, start_y;
-		// 				item_zim.on("mousedown", () => {
-		// 					start_x = item_zim.x;
-		// 					start_y = item_zim.y;
-		// 				});
-		// 				item_zim.on("pressup", () => {
-		// 					// check if this is click event, not drag event
-		// 					if (start_x == item_zim.x && start_y == item_zim.y) {
-		// 						item_zim.animate({props: {rotation: "60"}, time:.1, ease: "linear"});
-		// 					}
-		// 				});
-		// 			}
-		// 		}
-		// 	});
-		// });
+        Object.keys(players).forEach(player => {
+            Object.keys(items).forEach(item => {
+                let item_obj = items[item];
+                for (let i = 0; i < item_obj.count; i++) {
+                    let item_zim = new Pic(`images/${item}_${player}.svg`)
+                        .centerReg()
+                        .sca(.7)
+                        .pos(item_obj.width * i, item_obj.height, players[player][0], players[player][1])
+                        .drag()
+                    ;
+                    if (item == "road") {
+                        let start_x, start_y;
+                        item_zim.on("mousedown", () => {
+                            start_x = item_zim.x;
+                            start_y = item_zim.y;
+                        });
+                        item_zim.on("pressup", () => {
+                            // check if this is click event, not drag event
+                            if (start_x == item_zim.x && start_y == item_zim.y) {
+                                item_zim.animate({props: {rotation: "60"}, time:.1, ease: "linear"});
+                            }
+                        });
+                    }
+                }
+            });
+        });
 
-		new Label("Dice").siz(100).pos(20, 450, RIGHT, TOP).on("click", function(e) {
-			// reset scale of all highlighted items
-			for (let chit_num in chits_zim) {
-				for (let chit_zim of chits_zim[chit_num]) {
-					chit_zim.animate({props: {scale: .4}, time:.1, ease: "linear"});
-				}
-			}
-			rollADie({
-				element: document.getElementById("dice"), // element to display the animated dice in.
-				numberOfDice: 2,
-				soundVolume: 0,
-				delay: 1000000000,
-				callback: res => {
-					let dice = res[0] + res[1];
-					if (Object.keys(chits_zim).includes(dice.toString())) {
-						for (let chit_zim of chits_zim[dice]) {
-							chit_zim.animate({props: {scale: .7}, time:.1, ease: "linear"});
-						}
-					}
-				},
-			});
-		});
+        new Label("Dice").siz(100).pos(20, 450, RIGHT, TOP).on("click", function(e) {
+            // reset scale of all highlighted items
+            for (let chit_num in chits_zim) {
+                for (let chit_zim of chits_zim[chit_num]) {
+                    chit_zim.animate({props: {scale: .4}, time:.1, ease: "linear"});
+                }
+            }
+            rollADie({
+                element: document.getElementById("dice"), // element to display the animated dice in.
+                numberOfDice: 2,
+                soundVolume: 0,
+                delay: 1000000000,
+                callback: res => {
+                    let dice = res[0] + res[1];
+                    if (Object.keys(chits_zim).includes(dice.toString())) {
+                        for (let chit_zim of chits_zim[dice]) {
+                            chit_zim.animate({props: {scale: .7}, time:.1, ease: "linear"});
+                        }
+                    }
+                },
+            });
+        });
 
-	}
-	</script>
+    }
+    </script>
 </head>
 <body>
-	<div style="position: absolute; top: 40%; left: 85%; z-index: 10;" id="dice"></div>
+    <div style="position: absolute; top: 40%; left: 85%; z-index: 10;" id="dice"></div>
 </body>
 </html>
