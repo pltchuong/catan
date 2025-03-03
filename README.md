@@ -1,5 +1,4 @@
-# Online Catan
-## for offline players ♥
+# Online Catan for offline players ♥
 
 This is a special online version of Catan that **requires** you to have the original **decks of card** on your hand in order to play with. You'll have the board and the pieces online.
 
