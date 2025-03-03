@@ -1,0 +1,346 @@
+<html>
+<head>
+    <script src="https://unpkg.com/roll-a-die@2.0.1/dist/roll-a-die.js"></script>
+    <script type="module">
+
+    function shuffle(array) {
+        for (let i = array.length - 1; i >= 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function combine(array1, array2) {
+        return array1.flatMap(d => array2.map(v => `${d}_${v}`));
+    }
+
+    function param(key, default_value=false) {
+        return new URLSearchParams(location.search).get(key) || default_value;
+    }
+
+    import zim from "https://zimjs.org/cdn/017/zim";
+
+    const FIXED_TILES = ['sea', 'desert', 'gold', 'volcano'];
+
+    const w = 200;
+    const h = 174;
+    const players = {
+        "colors": {
+            "red": [LEFT, TOP],
+            "blue": [RIGHT, TOP],
+            "orange": [LEFT, BOTTOM],
+            "green": [RIGHT, BOTTOM],
+        },
+        "items": {
+            "road": {
+                "count": 15,
+                "width": 35,
+                "height": 0,
+            },
+            "city": {
+                "count": 4,
+                "width": 90,
+                "height": 130,
+            },
+            "settlement": {
+                "count": 5,
+                "width": 70,
+                "height": 200,
+            },
+            "ship": {
+                "count": 6,
+                "width": 70,
+                "height": 280,
+            },
+        },
+    };
+    const scenarios = {
+        "base": {
+            "width": 1.5,
+            "board": [
+                [[],[],['sea','generic',3],['sea'],['sea','grain',4],['sea']],
+                [[],['sea'],['ore',10],['wool',2],['lumber',9],['sea','ore',4]],
+                [[],['sea','lumber',2],['grain',12],['brick',6],['wool',4],['brick',10],['sea']],
+                [['sea'],['grain',9],['lumber',11],['desert','robber'],['lumber',3],['ore',8],['sea','generic',5]],
+                [[],['sea','brick',2],['lumber',8],['ore',3],['grain',4],['wool',5],['sea']],
+                [[],['sea'],['brick',5],['grain',6],['wool',11],['sea','wool',0]],
+                [[],[],['sea','generic',1],['sea'],['sea','generic',0],['sea']],
+            ],
+        },
+
+        "heading_for_the_new_shores": {
+            "width": 1.5,
+            "board": [
+                [[],['sea'],['sea'],['sea'],['sea','lumber',3],['sea'],['sea','brick',4]],
+                [['sea'],['grain',6],['sea','generic',3],['ore',10],['lumber',2],['grain',8],['sea']],
+                [['sea'],['brick',3],['sea'],['wool',8],['brick',9],['wool',4],['ore',3],['sea','generic',5]],
+                [['sea'],['sea','wool',2],['lumber',5],['grain',11],['desert','robber'],['lumber',10],['brick',6],['sea']],
+                [['sea'],['gold',10],['sea'],['wool',9],['grain',3],['brick',11],['grain',12],['sea','ore',5]],
+                [['sea'],['lumber',9],['sea','generic',1],['ore',4],['lumber',6],['wool',5],['sea']],
+                [['sea'],['ore',2],['brick',5],['sea'],['sea','grain',1],['sea'],['sea','generic',0]],
+                [['sea'],['sea'],['gold',4],['sea'],['wool',11],['ore',8],['sea']],
+                [[],[],['sea'],['sea'],['sea'],['sea'],['sea']],
+            ],
+        },
+
+        "the_four_islands": {
+            "width": 1.5,
+            "board": [
+                [[],[],['sea'],['sea'],['sea'],['sea'],['sea'],],
+                [[],['sea'],['grain',4],['sea'],['grain',11],['wool',10],['sea','wool',5]],
+                [[],['sea','generic',3],['ore',8],['sea'],['brick',2],['ore',4],['grain',6],['sea','brick',4]],
+                [['sea'],['wool',11],['lumber',9],['sea'],['sea','generic',1],['wool',9],['brick',4],['sea']],
+                [[],['sea'],['sea','ore',0],['sea'],['lumber',6],['sea'],['sea','generic',3],['sea']],
+                [[],['sea','lumber',3],['ore',10],['brick',5],['sea','generic',0],['lumber',3],['grain',5],['sea']],
+                [[],['sea'],['wool',5],['grain',12],['ore',3],['sea'],['brick',10],['sea','grain','5']],
+                [[],['sea'],['lumber',11],['lumber',9],['sea'],['wool',8],['sea']],
+                [[],[],['sea'],['sea'],['sea'],['sea'],['sea'],],
+            ],
+        },
+
+        "across_the_wasteland": {
+            "width": 1.5,
+            "board": [
+                [[],['sea','generic',3],['sea'],['sea'],['sea'],['sea'],['sea'],['sea','generic',4]],
+                [['sea'],['gold',10],['sea'],['sea'],['sea'],['brick',3],['lumber',8],['sea']],
+                [[],['sea'],['sea','lumber',3],['grain',9],['desert'],['sea','generic',3],['sea'],['sea']],
+                [['sea','generic',2],['ore',4],['lumber',11],['wool',10],['desert'],['grain',6],['ore',5],['sea','grain',5]],
+                [['sea'],['brick',2],['wool',5],['ore',6],['desert', 'robber'],['lumber',10],['wool',12],['lumber',11],['sea']],
+                [['sea','wool',2],['lumber',8],['brick',3],['grain',4],['desert'],['wool',9],['brick',8],['sea','generic',5]],
+                [[],['sea'],['sea'],['sea','brick',1],['desert'],['ore',3],['sea','ore',0],['sea']],
+                [['sea'],['grain',11],['ore',6],['sea'],['sea'],['sea'],['gold',4],['sea']],
+                [[],['sea','generic',1],['sea'],['sea'],[],[],['sea'],['sea','wool',0]],
+            ],
+        },
+    };
+
+    const scenario = param("map") && scenarios[param("map")] ? param("map") : "base";
+    const board = scenarios[scenario].board;
+    const board_width  = w * Math.max(...board.map(edge=> edge.length));
+    const board_height = h * board.length + 58;
+    const chits_zim = {
+        7: [],
+    };
+
+    new Frame(
+        FIT,
+        board_width * scenarios[scenario].width,
+        board_height + 58 + 50,
+        "#328dc0",
+        "#328dc0",
+        ready,
+    );
+    function ready() {
+
+        function setup_board() {
+            let container = new Container(board_width, board_height).center();
+
+            for (let r = 0; r < board.length; r++) {
+                for (let c = 0; c < board[r].length; c++) {
+
+                    let tile_x = w * c + (r % 2 == 0 ? 0 : w/2);
+                    let tile_y = h * r;
+                    let row = board[r];
+                    let cell = row[c];
+
+                    if (cell.length > 0) { // skip void tile
+                        let tile = cell[0];
+                        if (tile == 'sea') {
+                            new Pic(`images/tile_sea.svg`).siz(w).pos(tile_x, tile_y).addTo(container);
+
+                            // if sea tile has port
+                            if (cell.length > 1) {
+                                let port = cell[1];
+                                let path = cell[2];
+                                new Pic(`images/port_${port}.svg`).siz(100).pos(tile_x + 40, tile_y + 50).addTo(container);
+
+                                let ax = 0;
+                                let ay = 0;
+                                let bx = 0;
+                                let by = 0;
+                                if (path == 0) {
+                                    ax = 35;
+                                    ay = 50;
+                                    bx = 90;
+                                    by = 10;
+                                } else if (path == 1) {
+                                    ax = 97;
+                                    ay = 20;
+                                    bx = 160;
+                                    by = 60;
+                                } else if (path == 2) {
+                                    ax = 160;
+                                    ay = 60;
+                                    bx = 160;
+                                    by = 135;
+                                } else if (path == 3) {
+                                    ax = 160;
+                                    ay = 135;
+                                    bx = 90;
+                                    by = 170;
+                                } else if (path == 4) {
+                                    ax = 90;
+                                    ay = 170;
+                                    bx = 20;
+                                    by = 135;
+                                } else if (path == 5) {
+                                    ax = 20;
+                                    ay = 135;
+                                    bx = 20;
+                                    by = 60;
+                                }
+                                new Pic(`images/icon_dock.svg`).centerReg().sca(.2).pos(tile_x + ax, tile_y + ay).rot((path-1+0) * 60).addTo(container);
+                                new Pic(`images/icon_dock.svg`).centerReg().sca(.2).pos(tile_x + bx, tile_y + by).rot((path-1+1) * 60).addTo(container);
+                            }
+                        } else if (tile == 'desert') {
+                            new Pic(`images/tile_${tile}.svg`).siz(w).pos(tile_x, tile_y).addTo(container);
+
+                            // if desert tile has robber
+                            if (cell.length > 1) {
+                                let robber = cell[1];
+                                let robber_zim = new Pic(`images/icon_${robber}.svg`).centerReg().sca(.4).pos(tile_x + 60, tile_y + 100).addTo(container).drag();
+                                chits_zim[7].push(robber_zim);
+                            }
+                        } else {
+                            let chit = cell[1];
+                            let tile_zim = new Pic(`images/tile_${tile}.svg`).siz(w).pos(tile_x, tile_y).addTo(container);
+                            let chit_zim = new Pic(`images/prob_${chit}.svg`).centerReg().sca(.4).pos(tile_x + 75, tile_y + 120).addTo(container).drag();
+                            if (Object.keys(chits_zim).includes(chit.toString())) {
+                                chits_zim[chit].push(chit_zim);
+                            } else {
+                                chits_zim[chit] = [chit_zim];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function setup_players() {
+            Object.keys(players.colors).forEach(color => {
+                let position = players.colors[color];
+                Object.keys(players.items).forEach(item => {
+                    let item_obj = players.items[item];
+                    for (let i = 0; i < item_obj.count; i++) {
+                        let item_zim = new Pic(`images/${item}_${color}.svg`)
+                            .centerReg()
+                            .sca(.7)
+                            .pos(item_obj.width * i, item_obj.height, position[0], position[1])
+                            .drag()
+                        ;
+                        if (item == "road") {
+                            let start_x, start_y;
+                            item_zim.on("mousedown", () => {
+                                start_x = item_zim.x;
+                                start_y = item_zim.y;
+                            });
+                            item_zim.on("pressup", () => {
+                                // check if this is click event, not drag event
+                                if (start_x == item_zim.x && start_y == item_zim.y) {
+                                    item_zim.animate({props: {rotation: "60"}, time:.1, ease: "linear"});
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        }
+
+        function setup_dices() {
+            new Label("Dice").siz(100).pos(20, 450, RIGHT, TOP).on("click", function(e) {
+                // reset scale of all highlighted items
+                for (let chit_num in chits_zim) {
+                    for (let chit_zim of chits_zim[chit_num]) {
+                        chit_zim.animate({props: {scale: .4}, time:.1, ease: "linear"});
+                    }
+                }
+                rollADie({
+                    element: document.getElementById("dice"), // element to display the animated dice in.
+                    numberOfDice: 2,
+                    soundVolume: 0,
+                    delay: 1000000000,
+                    callback: res => {
+                        let dice = res[0] + res[1];
+                        if (Object.keys(chits_zim).includes(dice.toString())) {
+                            for (let chit_zim of chits_zim[dice]) {
+                                chit_zim.animate({props: {scale: .7}, time:.1, ease: "linear"});
+                            }
+                        }
+                    },
+                });
+            });
+        }
+
+        function shuffle_board(shuffle_tiles = false, shuffle_chits = false, shuffle_ports = false) {
+
+            zog(shuffle_tiles)
+
+            // collect all data from the board
+            let all_tiles = [];
+            let all_ports = [];
+            let all_chits = [];
+            for (let r = 0; r < board.length; r++) {
+                for (let c = 0; c < board[r].length; c++) {
+                    let row = board[r];
+                    let cell = row[c];
+
+                    if (cell.length > 0) { // skip void tile
+                        let tile = cell[0];
+                        if (tile == 'sea' && cell.length > 1) {
+                            let port = cell[1];
+                            all_ports.push(port);
+                        }
+                        if (!FIXED_TILES.includes(tile)) {
+                            let chit = cell[1];
+                            all_tiles.push(tile);
+                            all_chits.push(chit);
+                        }
+                    }
+                }
+            }
+
+            // shuffle items if needed
+            if (shuffle_tiles) {
+                shuffle(all_tiles);
+            }
+            if (shuffle_chits) {
+                shuffle(all_chits);
+            }
+            if (shuffle_ports) {
+                shuffle(all_ports);
+            }
+
+            // redistribute items back to the board
+            let ti = 0;
+            let pi = 0;
+            for (let r = 0; r < board.length; r++) {
+                for (let c = 0; c < board[r].length; c++) {
+                    let row = board[r];
+                    let cell = row[c];
+
+                    if (cell.length > 0) { // skip void tile
+                        let tile = cell[0];
+                        if (tile == 'sea' && cell.length > 1) {
+                            board[r][c] = [tile, all_ports[pi], board[r][c][2]];
+                            pi++;
+                        }
+                        if (!FIXED_TILES.includes(tile)) {
+                            board[r][c] = [all_tiles[ti], all_chits[ti]];
+                            ti++;
+                        }
+                    }
+                }
+            }
+        }
+
+        shuffle_board(param("shuffle_tiles", false), param("shuffle_chits", false), param("shuffle_ports", false));
+        setup_board();
+        setup_players();
+        setup_dices();
+    }
+    </script>
+</head>
+<body>
+    <div style="position: absolute; top: 40%; left: 85%; z-index: 10;" id="dice"></div>
+</body>
+</html>
