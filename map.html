@@ -135,7 +135,7 @@
             "width": 1.5,
             "board": [
                 [[],['sea','generic',3],['sea'],['sea'],['sea'],['sea'],['sea'],['sea','generic',4]],
-                [['sea'],['gold',10],['sea'],['sea'],['sea'],['brick',3],['lumber',8],['sea']],
+                [['sea'],['gold',10],['sea'],['sea'],['sea','pirate'],['brick',3],['lumber',8],['sea']],
                 [[],['sea'],['sea','lumber',3],['grain',9],['desert'],['sea','generic',3],['sea'],['sea']],
                 [['sea','generic',2],['ore',4],['lumber',11],['wool',10],['desert'],['grain',6],['ore',5],['sea','grain',5]],
                 [['sea'],['brick',2],['wool',5],['ore',6],['desert', 'robber'],['lumber',10],['wool',12],['lumber',11],['sea']],
@@ -185,7 +185,7 @@
                 [[],['sea'],['sea'],['wool',4],['ore',3],['desert','robber'],['wool',3],['ore',10],['sea','generic',5]],
                 [[],['sea'],['ore',11],['sea','generic',2],['brick',11],['grain',2],['desert'],['brick',6],['sea']],
                 [[],['sea'],['grain',5],['sea'],['wool',6],['lumber',10],['lumber',4],['sea','brick',0]],
-                [[],['sea'],['sea'],['sea'],['sea','wool',1],['sea'],['sea','generic',0],['sea']],
+                [[],['sea','pirate'],['sea'],['sea'],['sea','wool',1],['sea'],['sea','generic',0],['sea']],
                 [['sea'],['gold',9],['brick',5],['lumber',11],['sea'],['grain',8],['gold',10],['sea']],
                 [[],['sea'],['sea'],['sea'],['sea'],['sea'],['sea'],['sea']],
             ],
@@ -198,7 +198,7 @@
                 [['sea','generic',3],['gold',3],['lumber',6],['sea'],['sea'],['lumber',6],['gold',3],['sea','generic',4]],
                 [['sea'],['lumber',5],['ore',9],['grain',10],['sea'],['grain',10],['ore',9],['lumber',5],['sea']],
                 [['sea'],['wool',8],['brick',4],['sea'],['sea'],['brick',4],['wool',8],['sea']],
-                [[],['sea'],['sea'],['sea'],['sea'],['sea'],['sea'],['sea']],
+                [[],['sea'],['sea'],['sea'],['sea','pirate'],['sea'],['sea'],['sea']],
                 [['sea'],['wool',8],['brick',4],['sea'],['sea'],['brick',4],['wool',8],['sea']],
                 [['sea'],['lumber',5],['ore',9],['grain',10],['sea'],['grain',10],['ore',9],['lumber',5],['sea']],
                 [['sea','generic',1],['gold',3],['lumber',6],['sea'],['sea'],['lumber',6],['gold',3],['sea','generic',0]],
@@ -213,7 +213,7 @@
                 [[],['sea'],['sea'],['sea','generic',2],['wool',3],['lumber',5],['sea','ore',4],['sea']],
                 [[],['sea'],['ore',4],['sea'],['brick',11],['ore',4],['lumber',2],['brick',9],['sea','generic',4]],
                 [['sea'],['gold',9],['sea'],['sea'],['grain',8],['lumber',9],['wool',6],['ore',10],['sea']],
-                [[],['sea'],['sea'],['sea'],['wool',10],['grain',10],['sea','generic',0],['grain',12],['sea','grain',5]],
+                [[],['sea','pirate'],['sea'],['sea'],['wool',10],['grain',10],['sea','generic',0],['grain',12],['sea','grain',5]],
                 [[],['sea'],['sea'],['sea'],['sea'],['desert','robber'],['sea'],['lumber',3],['sea']],
                 [[],['sea','wool',2],['wool',3],['lumber',8],['ore',5],['sea'],['sea'],['sea'],['sea','brick',0]],
                 [[],['sea'],['wool',4],['grain',11],['brick',6],['sea'],['gold',5],['sea']],
@@ -256,8 +256,14 @@
                         if (tile == 'sea') {
                             new Pic(`images/tile_sea.svg`).siz(w).pos(tile_x, tile_y).addTo(container);
 
+                            // if sea tile has pirate
+                            if (cell.length == 2) {
+                                let pirate = cell[1];
+                                let pirate_zim = new Pic(`images/icon_${pirate}.svg`).centerReg().siz(70).pos(tile_x + 70, tile_y + 70).addTo(container).drag();
+                                chits_zim[7].push(pirate_zim);
+
                             // if sea tile has port
-                            if (cell.length > 1) {
+                            } else if (cell.length > 2) {
                                 let port = cell[1];
                                 let path = cell[2];
                                 new Pic(`images/port_${port}.svg`).siz(100).pos(tile_x + 40, tile_y + 50).addTo(container);
@@ -381,8 +387,6 @@
 
         function shuffle_board(shuffle_tiles = false, shuffle_chits = false, shuffle_ports = false) {
 
-            zog(shuffle_tiles)
-
             // collect all data from the board
             let all_tiles = [];
             let all_ports = [];
@@ -394,7 +398,7 @@
 
                     if (cell.length > 0) { // skip void tile
                         let tile = cell[0];
-                        if (tile == 'sea' && cell.length > 1) {
+                        if (tile == 'sea' && cell.length > 2) {
                             let port = cell[1];
                             all_ports.push(port);
                         }
@@ -428,7 +432,7 @@
 
                     if (cell.length > 0) { // skip void tile
                         let tile = cell[0];
-                        if (tile == 'sea' && cell.length > 1) {
+                        if (tile == 'sea' && cell.length > 2) {
                             board[r][c] = [tile, all_ports[pi], board[r][c][2]];
                             pi++;
                         }
