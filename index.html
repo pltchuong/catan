@@ -18,6 +18,21 @@
 
 	  gtag('config', 'G-5K1C4JTCV9');
 	</script>
+
+	<script src="https://cdn.jsdelivr.net/npm/umbrellajs"></script>
+	<script>
+		function display_map() {
+			let selected_map = u("#map select").first().value;
+			u("#preview").replace(`<div id="preview"><img src="images/maps/map_${selected_map}.png" /></div>`);
+		}
+	</script>
+	<style>
+		#preview img {
+			max-height: 200px;
+			display: block;
+			margin: 20px auto 0;
+		}
+	</style>
 </head>
 <body>
 	<main>
@@ -43,7 +58,7 @@
 			<form action="map.html" method="GET">
 				<div>
 					<label>Select a map</label>
-					<select name="map" required>
+					<select name="map" onchange="display_map()" required>
 						<option></option>
 						<option value="base">Basic (Catan original)</option>
 
@@ -58,6 +73,7 @@
 						<option value="four_kingdoms">Four Kingdoms (The Lost Maps)</option>
 						<option value="nautilus">Nautilus (The Lost Maps)</option>
 					</select>
+					<div id="preview"></div>
 				</div>
 				<br  />
 				<div class="flex">
