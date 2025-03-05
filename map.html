@@ -155,6 +155,22 @@
             ],
         },
 
+        "the_forgotten_tribe": {
+            "width": 1.3,
+            "has_ship": true,
+            "board": [
+                [[],[],['sea'],['sea'],['sea','wool',3],['sea'],['sea'],['sea'],['sea','grain',4]],
+                [[],['sea'],['gold','extra=v1|d1'],['desert','robber'],['brick','extra=v1'],['sea'],['brick'],['desert','extra=v1|d1'],['sea']],
+                [[],['sea','ore',3],['sea'],['sea'],['sea'],['sea'],['sea'],['sea'],['sea'],['sea']],
+                [['sea'],['lumber', 'extra=v1'],['sea'],['grain',3],['brick',10],['wool',8],['ore',3],['grain',9],['lumber',11],['sea']],
+                [[],['sea'],['sea'],['wool',2],['lumber',5],['grain',12],['wool',4],['brick',8],['wool',10],['sea']],
+                [['sea'],['wool','extra=v1'],['sea'],['ore',4],['lumber',6],['brick',5],['ore',11],['lumber',9],['grain',6],['sea']],
+                [[],['sea','brick',1],['sea'],['sea'],['sea'],['sea'],['sea'],['sea'],['sea'],['sea']],
+                [[],['sea'],['grain','extra=v1|d1'],['ore'],['desert','extra=v1'],['sea','pirate'],['ore'],['gold','extra=v1|d1'],['sea']],
+                [[],[],['sea'],['sea'],['sea'],['sea','lumber',0],['sea'],['sea'],['sea','generic',0]],
+            ],
+        },
+
         "across_the_wasteland": {
             "width": 1.5,
             "has_ship": true,
@@ -309,73 +325,83 @@
                     let cell = row[c];
 
                     if (cell.length > 0) { // skip void tile
+
+                        // Setup the main tile
                         let tile = cell[0];
-                        if (tile == 'sea') {
-                            new Pic(`images/tile_sea.svg`).siz(w).pos(tile_x, tile_y).addTo(container);
+                        let tile_zim = new Pic(`images/tile_${tile}.svg`).nam(tile).siz(w).pos(tile_x, tile_y).addTo(container);
 
-                            // if sea tile has pirate
-                            if (cell.length == 2) {
-                                let pirate = cell[1];
-                                let pirate_zim = new Pic(`images/icon_${pirate}.svg`).centerReg().siz(70).pos(tile_x + 70, tile_y + 70).addTo(container).drag();
-                                chits_zim[7].push(pirate_zim);
+                        // Sea tiles might have a pirate. We might even have
+                        // more than one pirate on the board. Pirates are
+                        // draggable.
+                        if (tile == 'sea' && cell[1] == 'pirate') {
+                            let pirate_zim = new Pic(`images/icon_pirate.svg`).centerReg().siz(70).pos(tile_x + 70, tile_y + 70).addTo(container).drag();
+                            chits_zim[7].push(pirate_zim);
 
-                            // if sea tile has port
-                            } else if (cell.length > 2) {
-                                let port = cell[1];
-                                let path = cell[2];
-                                new Pic(`images/port_${port}.svg`).siz(100).pos(tile_x + 40, tile_y + 50).addTo(container);
+                        // Sea tiles might have a port attached to it. The
+                        // position of the dock is relative to the sea tile.
+                        // The order of surrounding tiles is always the same:
+                        // 0 - top left
+                        // 1 - top right
+                        // 2 - right
+                        // 3 - bottom right
+                        // 4 - bottom left
+                        // 5 - left
+                        } else if (tile == 'sea' && cell.length > 2) {
+                            let port = cell[1];
+                            let path = cell[2];
+                            new Pic(`images/port_${port}.svg`).siz(100).pos(tile_x + 40, tile_y + 50).addTo(container);
 
-                                let ax = 0;
-                                let ay = 0;
-                                let bx = 0;
-                                let by = 0;
-                                if (path == 0) {
-                                    ax = 35;
-                                    ay = 50;
-                                    bx = 90;
-                                    by = 10;
-                                } else if (path == 1) {
-                                    ax = 97;
-                                    ay = 20;
-                                    bx = 160;
-                                    by = 60;
-                                } else if (path == 2) {
-                                    ax = 160;
-                                    ay = 60;
-                                    bx = 160;
-                                    by = 135;
-                                } else if (path == 3) {
-                                    ax = 160;
-                                    ay = 135;
-                                    bx = 90;
-                                    by = 170;
-                                } else if (path == 4) {
-                                    ax = 90;
-                                    ay = 170;
-                                    bx = 20;
-                                    by = 135;
-                                } else if (path == 5) {
-                                    ax = 20;
-                                    ay = 135;
-                                    bx = 20;
-                                    by = 60;
-                                }
-                                new Pic(`images/icon_dock.svg`).centerReg().sca(.2).pos(tile_x + ax, tile_y + ay).rot((path-1+0) * 60).addTo(container);
-                                new Pic(`images/icon_dock.svg`).centerReg().sca(.2).pos(tile_x + bx, tile_y + by).rot((path-1+1) * 60).addTo(container);
+                            let ax = 0;
+                            let ay = 0;
+                            let bx = 0;
+                            let by = 0;
+                            if (path == 0) {
+                                ax = 35;
+                                ay = 50;
+                                bx = 90;
+                                by = 10;
+                            } else if (path == 1) {
+                                ax = 97;
+                                ay = 20;
+                                bx = 160;
+                                by = 60;
+                            } else if (path == 2) {
+                                ax = 160;
+                                ay = 60;
+                                bx = 160;
+                                by = 135;
+                            } else if (path == 3) {
+                                ax = 160;
+                                ay = 135;
+                                bx = 90;
+                                by = 170;
+                            } else if (path == 4) {
+                                ax = 90;
+                                ay = 170;
+                                bx = 20;
+                                by = 135;
+                            } else if (path == 5) {
+                                ax = 20;
+                                ay = 135;
+                                bx = 20;
+                                by = 60;
                             }
-                        } else if (tile == 'desert') {
-                            new Pic(`images/tile_${tile}.svg`).siz(w).pos(tile_x, tile_y).addTo(container);
+                            new Pic(`images/icon_dock.svg`).centerReg().sca(.2).pos(tile_x + ax, tile_y + ay).rot((path-1+0) * 60).addTo(container);
+                            new Pic(`images/icon_dock.svg`).centerReg().sca(.2).pos(tile_x + bx, tile_y + by).rot((path-1+1) * 60).addTo(container);
 
-                            // if desert tile has robber
-                            if (cell.length > 1) {
-                                let robber = cell[1];
-                                let robber_zim = new Pic(`images/icon_${robber}.svg`).centerReg().sca(.4).pos(tile_x + 60, tile_y + 100).addTo(container).drag();
-                                chits_zim[7].push(robber_zim);
-                            }
+                        // Desert tiles might have a robber. We might even have
+                        // more than one robber on the board. Robbers are
+                        // draggable.
+                        } else if (tile == 'desert' && cell[1] == 'robber') {
+                            let robber_zim = new Pic(`images/icon_robber.svg`).centerReg().sca(.4).pos(tile_x + 60, tile_y + 100).addTo(container).drag();
+                            chits_zim[7].push(robber_zim);
+
+                        // Foggy tiles are clickable and reveal random tile and
+                        // random chits (if available). The chits must behave
+                        // just like any other chits on the board.
                         } else if (tile == 'fog') {
-                            let fog_zim = new Pic(`images/tile_${tile}.svg`).siz(w).pos(tile_x, tile_y).addTo(container);
-                            fog_zim.on("click", () => {
-                                fog_zim.removeFrom();
+                            tile_zim.on("click", () => {
+                                tile_zim.removeFrom();
 
                                 let foggy_tile = foggy_tiles.pop();
                                 let foggy_tile_zim = new SVG(`images/tile_${foggy_tile}.svg`).addTo(container).siz(w).pos(tile_x, tile_y);
@@ -388,14 +414,67 @@
 
                                 S.update();
                             });
-                        } else {
+
+                        // Most of land tiles has a chit/token attached to it.
+                        // The chit/token must be a number to match with dice's
+                        // numbers.
+                        } else if (typeof cell[1] === "number") {
                             let chit = cell[1];
-                            let tile_zim = new Pic(`images/tile_${tile}.svg`).siz(w).pos(tile_x, tile_y).addTo(container);
-                            let chit_zim = new Pic(`images/prob_${chit}.svg`).centerReg().sca(.4).pos(tile_x + 75, tile_y + 120).addTo(container).drag();
-                            if (Object.keys(chits_zim).includes(chit.toString())) {
-                                chits_zim[chit].push(chit_zim);
-                            } else {
-                                chits_zim[chit] = [chit_zim];
+                            if (chit) {
+                                let chit_zim = new Pic(`images/prob_${chit}.svg`).centerReg().sca(.4).pos(tile_x + 75, tile_y + 120).addTo(container).drag();
+                                if (Object.keys(chits_zim).includes(chit.toString())) {
+                                    chits_zim[chit].push(chit_zim);
+                                } else {
+                                    chits_zim[chit] = [chit_zim];
+                                }
+                            }
+
+                        // Some land tiles has some additional extra items
+                        // attached to it. The extra items are pipe-separated.
+                        // Each extra items has a number next to it indicating
+                        // the available quantity of the item. Supporting items
+                        // are:
+                        // v - Extra victory chit token
+                        // d - Extra development card
+                        } else if (typeof cell[1] === "string" && cell[1].startsWith('extra')) {
+                            let extra_items = cell[1].split('=')[1].split('|');
+                            for (let item of extra_items) {
+                                let name = item[0];
+                                let qty = parseInt(item.substr(1));
+                                for (let i = 0; i < qty; i++) {
+                                    let circle = new Circle({radius: 30, borderWidth: 2, borderColor: white}).addTo(container).drag();
+                                    let label = new Label({text: 1, size: 24, color: white}).addTo(circle).center();
+
+                                    if (name == 'v') {
+                                        circle.dye(red).pos(tile_x + 120, tile_y + 60 - i*3);
+                                    } else if (name == 'd') {
+                                        circle.dye(blue).pos(tile_x + 120, tile_y + 120 - i*3);
+                                    }
+                                }
+
+
+
+
+//                                 let circle = new Circle(30).addTo(container);
+//                                 let label = new Label({text: qty, size: 24, color: white}).addTo(circle).center();
+//                                 circle.on("click", () => {
+//                                     label.text -= 1;
+//                                     if (label.text == 0) {
+//                                         circle.removeFrom();
+//                                     } else {
+//                                         label.center();
+//                                     }
+//                                     S.update();
+//                                 });
+//
+//                                 // Display victory tokens on the side-top of the tile
+//                                 if (name == 'v') {
+//                                     circle.dye(red).pos(tile_x + 120, tile_y + 60);
+//
+//                                 // Display development cards on the side-bottom of the tile
+//                                 } else if (name == 'd') {
+//                                     circle.dye(blue).pos(tile_x + 120, tile_y + 120);
+//                                 }
                             }
                         }
                     }
