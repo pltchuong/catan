@@ -38,7 +38,7 @@
 
     import zim from "https://zimjs.org/cdn/017/zim";
 
-    const FIXED_TILES = ['sea', 'desert', 'gold', 'volcano'];
+    const FIXED_TILES = ['sea', 'desert', 'gold', 'fog', 'volcano'];
 
     const w = 200;
     const h = 174;
@@ -114,6 +114,25 @@
                 [[],['sea'],['lumber',11],['lumber',9],['sea'],['wool',8],['sea']],
                 [[],[],['sea'],['sea'],['sea'],['sea'],['sea'],],
             ],
+        },
+
+        "the_fog_islands": {
+            "width": 1.5,
+            "board": [
+                [[],[],['sea'],['sea'],['sea'],['sea'],['sea','generic',3],['sea']],
+                [[],['sea'],['fog'],['fog'],['sea'],['lumber',5],['wool',2],['sea','generic',5]],
+                [[],['sea'],['sea'],['fog'],['fog'],['sea'],['wool',8],['brick',9],['sea','ore',4]],
+                [['sea'],['lumber',5],['sea'],['fog'],['fog'],['sea'],['lumber',4],['grain',6],['sea']],
+                [[],['sea','generic',1],['grain',11],['sea'],['fog'],['fog'],['sea'],['ore',3],['sea','lumber',5]],
+                [['sea'],['gold',8],['wool',10],['sea'],['sea'],['fog'],['sea'],['sea','pirate']],
+                [[],['sea','brick',1],['brick',12],['lumber',6],['wool',9],['sea'],['fog'],['fog'],['sea']],
+                [[],['sea','generic',2],['ore',3],['grain',10],['brick',4],['sea'],['fog'],['sea']],
+                [[],[],['sea'],['sea','grain',0],['sea','wool',1],['sea'],['sea'],['sea']],
+            ],
+            "foggy": {
+                "tiles": {"sea": 2, "desert": 0, "gold": 2, "grain": 2, "wool": 2, "ore": 2, "brick": 1, "lumber": 1},
+                "chits": {2: 0, 3: 1, 4: 1, 5: 1, 6: 1, 8: 1, 9: 1, 10: 1, 11: 2, 12: 1},
+            },
         },
 
         "through_the_desert": {
@@ -230,6 +249,15 @@
         7: [],
     };
 
+    let foggy = scenarios[scenario].foggy;
+    let foggy_tiles, foggy_chits;
+    if (foggy) {
+        foggy_tiles = Object.keys(foggy.tiles).map(key => Array(foggy.tiles[key]).fill(key)).flatMap(i => i);
+        foggy_chits = Object.keys(foggy.chits).map(key => Array(foggy.chits[key]).fill(key)).flatMap(i => i);
+        shuffle(foggy_tiles);
+        shuffle(foggy_chits);
+    }
+
     new Frame(
         FIT,
         board_width * scenarios[scenario].width,
@@ -315,6 +343,22 @@
                                 let robber_zim = new Pic(`images/icon_${robber}.svg`).centerReg().sca(.4).pos(tile_x + 60, tile_y + 100).addTo(container).drag();
                                 chits_zim[7].push(robber_zim);
                             }
+                        } else if (tile == 'fog') {
+                            let fog_zim = new Pic(`images/tile_${tile}.svg`).siz(w).pos(tile_x, tile_y).addTo(container);
+                            fog_zim.on("click", () => {
+                                fog_zim.removeFrom();
+
+                                let foggy_tile = foggy_tiles.pop();
+                                let foggy_tile_zim = new SVG(`images/tile_${foggy_tile}.svg`).addTo(container).siz(w).pos(tile_x, tile_y);
+
+                                if (foggy_tile != 'sea' && foggy_tile != 'desert') {
+                                    let foggy_chit = foggy_chits.pop();
+                                    let foggy_chit_zim = new SVG(`images/prob_${foggy_chit}.svg`).addTo(container).centerReg().sca(.4).pos(tile_x + 75, tile_y + 120);
+                                    chits_zim[foggy_chit].push(foggy_chit_zim);
+                                }
+
+                                S.update();
+                            });
                         } else {
                             let chit = cell[1];
                             let tile_zim = new Pic(`images/tile_${tile}.svg`).siz(w).pos(tile_x, tile_y).addTo(container);
