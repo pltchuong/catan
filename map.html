@@ -358,45 +358,7 @@
                         if (tile == 'sea' && cell.length > 2) {
                             let port = cell[1];
                             let path = cell[2];
-                            new Pic(`images/port_${port}.svg`).siz(100).pos(tile_x + 40, tile_y + 50).addTo(container);
-
-                            let ax = 0;
-                            let ay = 0;
-                            let bx = 0;
-                            let by = 0;
-                            if (path == 0) {
-                                ax = 35;
-                                ay = 50;
-                                bx = 90;
-                                by = 10;
-                            } else if (path == 1) {
-                                ax = 97;
-                                ay = 20;
-                                bx = 160;
-                                by = 60;
-                            } else if (path == 2) {
-                                ax = 160;
-                                ay = 60;
-                                bx = 160;
-                                by = 135;
-                            } else if (path == 3) {
-                                ax = 160;
-                                ay = 135;
-                                bx = 90;
-                                by = 170;
-                            } else if (path == 4) {
-                                ax = 90;
-                                ay = 170;
-                                bx = 20;
-                                by = 135;
-                            } else if (path == 5) {
-                                ax = 20;
-                                ay = 135;
-                                bx = 20;
-                                by = 60;
-                            }
-                            new Pic(`images/icon_dock.svg`).centerReg().sca(.2).pos(tile_x + ax, tile_y + ay).rot((path-1+0) * 60).addTo(container);
-                            new Pic(`images/icon_dock.svg`).centerReg().sca(.2).pos(tile_x + bx, tile_y + by).rot((path-1+1) * 60).addTo(container);
+                            new Pic(`images/port_${port}.svg`).centerReg().nam(tile).siz(w).pos(tile_x, tile_y).rot(path * 60).addTo(container);
 
                         // Foggy tiles are clickable and reveal random tile and
                         // random chits (if available). The chits must behave
