@@ -303,6 +303,8 @@
     };
 
     const scenario = param("map") && scenarios[param("map")] ? param("map") : "base";
+    const theme = param("theme") || "colonist.io";
+    const ext = theme == "colonist.io" ? "svg" : "png";
     const board = scenarios[scenario].board;
     const board_width  = w * Math.max(...board.map(edge=> edge.length));
     const board_height = h * board.length + 58;
@@ -326,6 +328,8 @@
         "#328dc0",
         "#328dc0",
         ready,
+        [],
+        `images/themes/${theme}/`,
     );
     function ready() {
 
@@ -344,7 +348,7 @@
 
                         // Setup the main tile
                         let tile = cell[0];
-                        let tile_zim = new Pic(`images/tile_${tile}.svg`).nam(tile).siz(w).pos(tile_x, tile_y).addTo(container);
+                        let tile_zim = new Pic(`tile_${tile}.${ext}`).nam(tile).siz(w).pos(tile_x, tile_y).addTo(container);
 
                         // Sea tiles might have a port attached to it. The
                         // position of the dock is relative to the sea tile.
@@ -358,7 +362,7 @@
                         if (tile == 'sea' && cell.length > 2) {
                             let port = cell[1];
                             let path = cell[2];
-                            new Pic(`images/port_${port}.svg`).centerReg().nam(tile).siz(w).pos(tile_x, tile_y).rot(path * 60).addTo(container);
+                            new Pic(`port_${port}.${ext}`).centerReg().nam(tile).siz(w).pos(tile_x, tile_y).rot(path * 60).addTo(container);
 
                         // Foggy tiles are clickable and reveal random tile and
                         // random chits (if available). The chits must behave
@@ -368,11 +372,11 @@
                                 tile_zim.removeFrom();
 
                                 let foggy_tile = foggy_tiles.pop();
-                                let foggy_tile_zim = new SVG(`images/tile_${foggy_tile}.svg`).addTo(container).siz(w).pos(tile_x, tile_y);
+                                let foggy_tile_zim = new SVG(`tile_${foggy_tile}.${ext}`).addTo(container).siz(w).pos(tile_x, tile_y);
 
                                 if (foggy_tile != 'sea' && foggy_tile != 'desert') {
                                     let foggy_chit = foggy_chits.pop();
-                                    let foggy_chit_zim = new SVG(`images/prob_${foggy_chit}.svg`).addTo(container).centerReg().sca(.4).pos(tile_x + 75, tile_y + 120);
+                                    let foggy_chit_zim = new SVG(`prob_${foggy_chit}.${ext}`).addTo(container).centerReg().sca(.4).pos(tile_x + 75, tile_y + 120);
                                     chits_zim[foggy_chit].push(foggy_chit_zim);
                                 }
 
@@ -385,7 +389,7 @@
                         } else if (typeof cell[1] === "number") {
                             let chit = cell[1];
                             if (chit) {
-                                let chit_zim = new Pic(`images/prob_${chit}.svg`).centerReg().sca(.4).pos(tile_x + 75, tile_y + 120).addTo(container).drag();
+                                let chit_zim = new Pic(`prob_${chit}.${ext}`).centerReg().sca(.4).pos(tile_x + 75, tile_y + 120).addTo(container).drag();
                                 if (Object.keys(chits_zim).includes(chit.toString())) {
                                     chits_zim[chit].push(chit_zim);
                                 } else {
@@ -408,10 +412,10 @@
                                 let name = item[0];
 
                                 if (name == 'r') {
-                                    let robber_zim = new Pic(`images/icon_robber.svg`).centerReg().sca(.4).pos(tile_x + 60, tile_y + 100).addTo(container).drag();
+                                    let robber_zim = new Pic(`icon_robber.svg`).centerReg().sca(.4).pos(tile_x + 60, tile_y + 100).addTo(container).drag();
                                     chits_zim[7].push(robber_zim);
                                 } else if (name == 'p') {
-                                    let pirate_zim = new Pic(`images/icon_pirate.svg`).centerReg().siz(70).pos(tile_x + 70, tile_y + 70).addTo(container).drag();
+                                    let pirate_zim = new Pic(`icon_pirate.svg`).centerReg().siz(70).pos(tile_x + 70, tile_y + 70).addTo(container).drag();
                                     chits_zim[7].push(pirate_zim);
                                 } else {
                                     let qty = parseInt(item.substr(1));
@@ -441,7 +445,7 @@
                     for (let i = 0; i < item_obj.count; i++) {
                         let item_zim;
                         if (item != "ship" || (item == "ship" && scenarios[scenario].has_ship)) {
-                            item_zim = new Pic(`images/${item}_${color}.svg`)
+                            item_zim = new Pic(`${item}_${color}.svg`)
                                 .centerReg()
                                 .sca(.7)
                                 .pos(item_obj.width * (i%5) + ((i/5) * 10), item_obj.height + ((i/5) * 10), position[0], position[1])
