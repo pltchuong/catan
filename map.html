@@ -52,23 +52,23 @@
         "items": {
             "road": {
                 "count": 15,
-                "width": 35,
+                "width": 75,
                 "height": 0,
             },
             "city": {
                 "count": 4,
                 "width": 90,
-                "height": 130,
+                "height": 150,
             },
             "settlement": {
                 "count": 5,
                 "width": 70,
-                "height": 200,
+                "height": 220,
             },
             "ship": {
-                "count": 6,
+                "count": 15,
                 "width": 70,
-                "height": 280,
+                "height": 300,
             },
         },
     };
@@ -444,7 +444,7 @@
                             item_zim = new Pic(`images/${item}_${color}.svg`)
                                 .centerReg()
                                 .sca(.7)
-                                .pos(item_obj.width * i, item_obj.height, position[0], position[1])
+                                .pos(item_obj.width * (i%5) + ((i/5) * 10), item_obj.height + ((i/5) * 10), position[0], position[1])
                                 .drag()
                             ;
                         }
