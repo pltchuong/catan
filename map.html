@@ -78,7 +78,7 @@
             "has_ship": false,
             "board": [
                 [[],[],['sea','generic',3],['sea'],['sea','grain',4],['sea']],
-                [[],['sea'],['ore',10],['wool',2],['lumber',9],['sea','ore',4]],
+                [[],['sea', 'extra=p'],['ore',10],['wool',2],['lumber',9],['sea','ore',4]],
                 [[],['sea','lumber',2],['grain',12],['brick',6],['wool',4],['brick',10],['sea']],
                 [['sea'],['grain',9],['lumber',11],['desert','extra=r'],['lumber',3],['ore',8],['sea','generic',5]],
                 [[],['sea','brick',2],['lumber',8],['ore',3],['grain',4],['wool',5],['sea']],
@@ -97,7 +97,7 @@
                 [['sea'],['sea'],['sea','wool',2],['lumber',5],['grain',11],['desert','extra=r'],['lumber',10],['brick',6],['sea']],
                 [['sea','extra=p'],['gold',10],['sea'],['wool',9],['grain',3],['brick',11],['grain',12],['sea','ore',5],['sea'],['sea']],
                 [['sea'],['lumber',9],['sea','generic',1],['ore',4],['lumber',6],['wool',5],['sea'],['sea'],['sea']],
-                [[],['sea'],['ore',2],['brick',5],['sea'],['sea','grain',1],['sea'],['sea','generic',0],['sea']],
+                [[],['sea'],['ore',2],['brick',5],['sea'],['sea','grain',1],['sea'],['sea','generic',4],['sea']],
                 [[],['sea'],['sea'],['gold',4],['sea'],['wool',11],['ore',8],['sea']],
                 [[],[],['sea'],['sea'],['sea'],['sea'],['sea'],['sea']],
             ],
@@ -328,10 +328,45 @@
         "#328dc0",
         "#328dc0",
         ready,
-        [],
+        [
+            `tile_fog.${ext}`,
+            `tile_gold.${ext}`,
+            `tile_desert.${ext}`,
+            `tile_brick.${ext}`,
+            `tile_lumber.${ext}`,
+            `tile_wool.${ext}`,
+            `tile_grain.${ext}`,
+            `tile_ore.${ext}`,
+            `tile_sea.${ext}`,
+            `port_brick.${ext}`,
+            `port_lumber.${ext}`,
+            `port_wool.${ext}`,
+            `port_grain.${ext}`,
+            `port_ore.${ext}`,
+            `port_generic.${ext}`,
+            `prob_2.${ext}`,
+            `prob_3.${ext}`,
+            `prob_4.${ext}`,
+            `prob_5.${ext}`,
+            `prob_6.${ext}`,
+            `prob_8.${ext}`,
+            `prob_9.${ext}`,
+            `prob_10.${ext}`,
+            `prob_11.${ext}`,
+            `prob_12.${ext}`,
+        ],
         `images/themes/${theme}/`,
     );
     function ready() {
+
+        function pic(asset) {
+            let ext = asset.split('.')[1];
+            if (ext == 'svg') {
+                return new SVG(asset);
+            } else {
+                return new Pic(asset);
+            }
+        }
 
         function setup_board() {
             let container = new Container(board_width, board_height).center();
@@ -348,7 +383,7 @@
 
                         // Setup the main tile
                         let tile = cell[0];
-                        let tile_zim = new Pic(`tile_${tile}.${ext}`).nam(tile).siz(w).pos(tile_x, tile_y).addTo(container);
+                        let tile_zim = pic(`tile_${tile}.${ext}`).addTo(container).nam(tile).siz(w).pos(tile_x, tile_y);
 
                         // Sea tiles might have a port attached to it. The
                         // position of the dock is relative to the sea tile.
@@ -362,7 +397,7 @@
                         if (tile == 'sea' && cell.length > 2) {
                             let port = cell[1];
                             let path = cell[2];
-                            new Pic(`port_${port}.${ext}`).centerReg().nam(tile).siz(w).pos(tile_x, tile_y).rot(path * 60).addTo(container);
+                            pic(`port_${port}.${ext}`).addTo(container).centerReg().nam(tile).siz(w).pos(tile_x, tile_y).rot(path * 60);
 
                         // Foggy tiles are clickable and reveal random tile and
                         // random chits (if available). The chits must behave
@@ -372,11 +407,11 @@
                                 tile_zim.removeFrom();
 
                                 let foggy_tile = foggy_tiles.pop();
-                                let foggy_tile_zim = new SVG(`tile_${foggy_tile}.${ext}`).addTo(container).siz(w).pos(tile_x, tile_y);
+                                let foggy_tile_zim = pic(`tile_${foggy_tile}.${ext}`).addTo(container).siz(w).pos(tile_x, tile_y);
 
                                 if (foggy_tile != 'sea' && foggy_tile != 'desert') {
                                     let foggy_chit = foggy_chits.pop();
-                                    let foggy_chit_zim = new SVG(`prob_${foggy_chit}.${ext}`).addTo(container).centerReg().sca(.4).pos(tile_x + 75, tile_y + 120);
+                                    let foggy_chit_zim = pic(`prob_${foggy_chit}.${ext}`).addTo(container).centerReg().siz(70).pos(tile_x + 65, tile_y + 110);
                                     chits_zim[foggy_chit].push(foggy_chit_zim);
                                 }
 
@@ -389,7 +424,7 @@
                         } else if (typeof cell[1] === "number") {
                             let chit = cell[1];
                             if (chit) {
-                                let chit_zim = new Pic(`prob_${chit}.${ext}`).centerReg().sca(.4).pos(tile_x + 75, tile_y + 120).addTo(container).drag();
+                                let chit_zim = pic(`prob_${chit}.${ext}`).addTo(container).centerReg().siz(70).pos(tile_x + 65, tile_y + 110).drag();
                                 if (Object.keys(chits_zim).includes(chit.toString())) {
                                     chits_zim[chit].push(chit_zim);
                                 } else {
@@ -412,10 +447,10 @@
                                 let name = item[0];
 
                                 if (name == 'r') {
-                                    let robber_zim = new Pic(`icon_robber.svg`).centerReg().sca(.4).pos(tile_x + 60, tile_y + 100).addTo(container).drag();
+                                    let robber_zim = pic(`icon_robber.svg`).centerReg().siz(70).pos(tile_x + 60, tile_y + 100).addTo(container).drag();
                                     chits_zim[7].push(robber_zim);
                                 } else if (name == 'p') {
-                                    let pirate_zim = new Pic(`icon_pirate.svg`).centerReg().siz(70).pos(tile_x + 70, tile_y + 70).addTo(container).drag();
+                                    let pirate_zim = pic(`icon_pirate.svg`).centerReg().siz(70).pos(tile_x + 70, tile_y + 70).addTo(container).drag();
                                     chits_zim[7].push(pirate_zim);
                                 } else {
                                     let qty = parseInt(item.substr(1));
@@ -445,7 +480,7 @@
                     for (let i = 0; i < item_obj.count; i++) {
                         let item_zim;
                         if (item != "ship" || (item == "ship" && scenarios[scenario].has_ship)) {
-                            item_zim = new Pic(`${item}_${color}.svg`)
+                            item_zim = pic(`${item}_${color}.svg`)
                                 .centerReg()
                                 .sca(.7)
                                 .pos(item_obj.width * (i%5) + ((i/5) * 10), item_obj.height + ((i/5) * 10), position[0], position[1])
@@ -475,7 +510,7 @@
                 // reset scale of all highlighted items
                 for (let chit_num in chits_zim) {
                     for (let chit_zim of chits_zim[chit_num]) {
-                        chit_zim.animate({props: {scale: .4}, time:.1, ease: "linear"});
+                        chit_zim.animate({props: {width: 70}, time:.1, ease: "linear"});
                     }
                 }
                 rollADie({
@@ -487,7 +522,7 @@
                         let dice = res[0] + res[1];
                         if (Object.keys(chits_zim).includes(dice.toString())) {
                             for (let chit_zim of chits_zim[dice]) {
-                                chit_zim.animate({props: {scale: .7}, time:.1, ease: "linear"});
+                                chit_zim.animate({props: {width: 110}, time:.1, ease: "linear"});
                             }
                         }
                     },
