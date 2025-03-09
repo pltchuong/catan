@@ -74,7 +74,6 @@
     };
     const scenarios = {
         "base": {
-            "has_ship": false,
             "board": [
                 [[],[],['sea','generic',3],['sea'],['sea','grain',4],['sea']],
                 [[],['sea'],['ore',10],['wool',2],['lumber',9],['sea','ore',4]],
@@ -87,7 +86,6 @@
         },
 
         "heading_for_the_new_shores": {
-            "has_ship": true,
             "board": [
                 [[],[],['sea'],['sea'],['sea'],['sea','lumber',3],['sea'],['sea','brick',4]],
                 [[],['sea'],['grain',6],['sea','generic',3],['ore',10],['lumber',2],['grain',8],['sea']],
@@ -102,7 +100,6 @@
         },
 
         "the_four_islands": {
-            "has_ship": true,
             "board": [
                 [[],[],['sea'],['sea'],['sea'],['sea'],['sea'],],
                 [[],['sea'],['grain',4],['sea'],['grain',11],['wool',10],['sea','wool',5]],
@@ -117,7 +114,6 @@
         },
 
         "the_fog_islands": {
-            "has_ship": true,
             "board": [
                 [[],[],['sea'],['sea'],['sea'],['sea'],['sea','generic',3],['sea']],
                 [[],['sea'],['fog'],['fog'],['sea'],['lumber',5],['wool',2],['sea','generic',5]],
@@ -136,7 +132,6 @@
         },
 
         "through_the_desert": {
-            "has_ship": true,
             "board": [
                 [[],[],['sea'],['sea'],['sea'],['sea'],['sea','generic',4],['sea']],
                 [[],['sea'],['grain',12],['ore','6'],['sea','lumber',2],['lumber',9],['sea','lumber',3],['sea']],
@@ -151,7 +146,6 @@
         },
 
         "the_forgotten_tribe": {
-            "has_ship": true,
             "board": [
                 [[],[],['sea'],['sea'],['sea','wool',3],['sea'],['sea'],['sea'],['sea','grain',4]],
                 [[],['sea'],['gold','extra=v1|d1'],['desert','extra=r'],['brick','extra=v1'],['sea'],['brick'],['desert','extra=v1|d1'],['sea']],
@@ -166,7 +160,6 @@
         },
 
         "across_the_wasteland": {
-            "has_ship": true,
             "board": [
                 [[],[],['sea','generic',3],['sea'],['sea'],['sea'],['sea'],['sea'],['sea','generic',4]],
                 [[],['sea'],['gold',10],['sea'],['sea'],['sea','extra=p'],['brick',3],['lumber',8],['sea']],
@@ -181,7 +174,6 @@
         },
 
         "andalusia": {
-            "has_ship": true,
             "board": [
                 [[],[],['sea'],['sea'],['sea','generic',4],['sea'],['sea'],['sea'],['sea']],
                 [[],['sea'],['ore',11],['wool',6],['lumber',10],['brick',11],['wool',5],['grain',2],['sea']],
@@ -196,7 +188,6 @@
         },
 
         "another_catan": {
-            "has_ship": true,
             "board": [
                 [[],[],['sea'],['sea'],['sea','generic',4],['sea'],['sea'],['sea'],['sea'],['sea'],['sea'],['sea']],
                 [[],['sea','brick',3],['wool',8],['grain',3],['gold',11],['sea'],['sea'],['sea'],['sea'],['sea'],['sea'],['sea']],
@@ -211,7 +202,6 @@
         },
 
         "castaways": {
-            "has_ship": true,
             "board": [
                 [[],[],['sea'],['sea'],['sea'],['sea'],['sea'],['sea'],['sea'],['sea']],
                 [[],['sea'],['desert','extra=v1'],['sea'],['wool',9],['ore',11],['sea','generic',4],['sea'],['desert','extra=v1'],['sea']],
@@ -226,7 +216,6 @@
         },
 
         "drought": {
-            "has_ship": true,
             "board": [
                 [[],[],['sea'],['sea'],['sea'],['sea'],['sea'],['sea'],['sea']],
                 [[],['sea'],['sea'],['grain',6],['sea'],['lumber',9],['wool',5],['brick',9],['sea','lumber',4]],
@@ -241,7 +230,6 @@
         },
 
         "fog_mountain": {
-            "has_ship": false,
             "board": [
                 [[],[],['sea'],['sea','lumber',3],['sea'],['sea','generic',4]],
                 [[],['sea','brick',3],['lumber',9],['wool',12],['brick',8],['sea']],
@@ -258,7 +246,6 @@
         },
 
         "four_kingdoms": {
-            "has_ship": true,
             "board": [
                 [[],[],['sea'],['sea'],['sea'],['sea'],['sea'],['sea'],['sea']],
                 [[],['sea','generic',3],['gold',3],['lumber',6],['sea'],['sea'],['lumber',6],['gold',3],['sea','generic',4]],
@@ -273,7 +260,6 @@
         },
 
         "nautilus": {
-            "has_ship": true,
             "board": [
                 [[],[],['sea'],['sea'],['sea'],['sea','generic',3],['sea'],['sea']],
                 [[],['sea'],['sea'],['sea','generic',2],['wool',3],['lumber',5],['sea','ore',4],['sea']],
@@ -466,16 +452,18 @@
                 Object.keys(players.items).forEach(item => {
                     let item_obj = players.items[item];
                     for (let i = 0; i < item_obj.count; i++) {
-                        let item_zim;
-                        if (item != "ship" || (item == "ship" && scenarios[scenario].has_ship)) {
-                            item_zim = pic(`${item}_${color}.svg`)
-                                .centerReg()
-                                .sca(.7)
-                                .pos(item_obj.width * (i%3) + ((i/3) * 10), item_obj.height, position[0], position[1])
-                                .drag()
-                            ;
-                        }
-                        if (item == "road") {
+
+                        // setup players' objects
+                        let item_zim = pic(`${item}_${color}.svg`)
+                            .centerReg()
+                            .sca(.7)
+                            .pos(item_obj.width * (i%3) + ((i/3) * 10), item_obj.height, position[0], position[1])
+                            .rot(item == "ship" ? 20 : 0)
+                            .drag()
+                        ;
+
+                        // rotatable objects
+                        if (item == "road" || item == "ship") {
                             item_zim.on("pressmove", () => {
                                 let r = Math.round(item_zim.y / h) - 1;
                                 let c = Math.round((item_zim.x - (r % 2 == 0 ? 0 : w / 2)) / w) - 1;
