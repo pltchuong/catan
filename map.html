@@ -477,13 +477,15 @@
                         }
                         if (item == "road") {
                             item_zim.on("pressmove", () => {
-                                let r = Math.round(item_zim.y/h)-1;
-                                let c = Math.round(item_zim.x/w)-1;
+                                let r = Math.round(item_zim.y / h) - 1;
+                                let c = Math.round((item_zim.x - (r % 2 == 0 ? 0 : w / 2)) / w) - 1;
                                 if (board[r] && board[r][c] && board[r][c].length > 0) {
+
                                     let tile_zim = board[r][c][0];
                                     let middle_x = container.x + tile_zim.x;
                                     let top_y = container.y + r*h + h/3;
                                     let btm_y = container.y + r*h + h/3*2;
+
                                     let is_top_left  = item_zim.x < middle_x && item_zim.y < top_y;
                                     let is_top_right = item_zim.x > middle_x && item_zim.y < top_y;
                                     let is_mid_left  = item_zim.x < middle_x && item_zim.y > top_y && item_zim.y < btm_y;
