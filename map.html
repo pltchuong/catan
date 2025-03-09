@@ -479,7 +479,7 @@
                             item_zim.on("pressmove", () => {
                                 let r = Math.round(item_zim.y/h)-1;
                                 let c = Math.round(item_zim.x/w)-1;
-                                if (r >= 0 && c >= 0 && board[r][c].length > 0) {
+                                if (board[r] && board[r][c] && board[r][c].length > 0) {
                                     let tile_zim = board[r][c][0];
                                     let middle_x = container.x + tile_zim.x;
                                     let top_y = container.y + r*h + h/3;
